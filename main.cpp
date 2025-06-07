@@ -1,57 +1,177 @@
-#include <iostream>
-#include <array>
+#include "libraries.hpp"
+#include "functions.hpp"
+#include "random.hpp"
 
-#include <Helper.h>
+#include "game.hpp"
+#include "user_interface.hpp"
 
-int main() {
-    std::cout << "Hello, world!\n";
-    std::array<int, 100> v{};
-    int nr;
-    std::cout << "Introduceți nr: ";
-    /////////////////////////////////////////////////////////////////////////
-    /// Observație: dacă aveți nevoie să citiți date de intrare de la tastatură,
-    /// dați exemple de date de intrare folosind fișierul tastatura.txt
-    /// Trebuie să aveți în fișierul tastatura.txt suficiente date de intrare
-    /// (în formatul impus de voi) astfel încât execuția programului să se încheie.
-    /// De asemenea, trebuie să adăugați în acest fișier date de intrare
-    /// pentru cât mai multe ramuri de execuție.
-    /// Dorim să facem acest lucru pentru a automatiza testarea codului, fără să
-    /// mai pierdem timp de fiecare dată să introducem de la zero aceleași date de intrare.
+#include "entity.hpp"
+#include "player.hpp"
+#include "player_builder.hpp"
+
+#include "item.hpp"
+#include "potion.hpp"
+
+#include "goblin.hpp"
+#include "skeleton.hpp"
+#include "wolf.hpp"
+#include "orc.hpp"
+#include "crow.hpp"
+
+#include "exception.hpp"
+
+void setup()
+{
+    UI joc;
+
+    Game level;
+
+    std::string name;
+    std::shared_ptr<Entity> x;
+    std::shared_ptr<Item> y;
+
+    /// PLAYERS
     ///
-    /// Pe GitHub Actions (bife), fișierul tastatura.txt este folosit
-    /// pentru a simula date introduse de la tastatură.
-    /// Bifele verifică dacă programul are erori de compilare, erori de memorie și memory leaks.
-    ///
-    /// Dacă nu puneți în tastatura.txt suficiente date de intrare, îmi rezerv dreptul să vă
-    /// testez codul cu ce date de intrare am chef și să nu pun notă dacă găsesc vreun bug.
-    /// Impun această cerință ca să învățați să faceți un demo și să arătați părțile din
-    /// program care merg (și să le evitați pe cele care nu merg).
-    ///
-    /////////////////////////////////////////////////////////////////////////
-    std::cin >> nr;
-    /////////////////////////////////////////////////////////////////////////
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "v[" << i << "] = ";
-        std::cin >> v[i];
-    }
-    std::cout << "\n\n";
-    std::cout << "Am citit de la tastatură " << nr << " elemente:\n";
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "- " << v[i] << "\n";
-    }
-    ///////////////////////////////////////////////////////////////////////////
-    /// Pentru date citite din fișier, NU folosiți tastatura.txt. Creați-vă voi
-    /// alt fișier propriu cu ce alt nume doriți.
-    /// Exemplu:
-    /// std::ifstream fis("date.txt");
-    /// for(int i = 0; i < nr2; ++i)
-    ///     fis >> v2[i];
-    ///
-    ///////////////////////////////////////////////////////////////////////////
-    ///                Exemplu de utilizare cod generat                     ///
-    ///////////////////////////////////////////////////////////////////////////
-    Helper helper;
-    helper.help();
-    ///////////////////////////////////////////////////////////////////////////
-    return 0;
+    Player_Builder_Director director;
+    std::shared_ptr< Player_Builder > player_builder;
+
+    player_builder = std::make_shared<Knight_Player_Builder>() ;
+    director.set_player_builder( player_builder );
+    director.build_player();
+    x = director.get_player();
+    level.add_creature( x );
+
+    player_builder = std::make_shared<Archer_Player_Builder>() ;
+    director.set_player_builder( player_builder );
+    director.build_player();
+    x = director.get_player();
+    level.add_creature( x );
+
+    player_builder = std::make_shared<Shield_Player_Builder>() ;
+    director.set_player_builder( player_builder );
+    director.build_player();
+    x = director.get_player();
+    level.add_creature( x );
+
+    /// POTIONS
+    name = "Healing";
+    y = std::make_shared<Potion>( name,-1,25 );
+    level.add_item( y );
+
+    name = "Lightning";
+    y = std::make_shared<Potion>( name,0,-30 );
+    level.add_item( y );
+
+    name = "Increase Stats";
+    y = std::make_shared<Potion>( name,7,12 );
+    level.add_item( y );
+
+
+    /// ENEMIES
+
+////
+
+    /// lvl 1
+    x= std::make_shared<Skeleton>( 2 );
+    level.add_creature( x );
+    x= std::make_shared<Crow>( 3 );
+    level.add_creature( x );
+    x= std::make_shared<Skeleton>( 1 );
+    level.add_creature( x );
+    x= std::make_shared<Wolf>( 2 );
+    level.add_creature( x );
+
+    joc.Add_level(level);
+    level.reset();
+
+    // /// lvl 2
+    x= std::make_shared<Orc>( 5 );
+    level.add_creature( x );
+    x= std::make_shared<Goblin>( 3 );
+    level.add_creature( x );
+
+    joc.Add_level(level);
+    level.reset();
+
+    /// lvl 3
+    x= std::make_shared<Wolf>( 2 );
+    level.add_creature( x );
+    x= std::make_shared<Skeleton>( 1 );
+    level.add_creature( x );
+    x= std::make_shared<Wolf>( 1 );
+    level.add_creature( x );
+    x= std::make_shared<Skeleton>( 2 );
+    level.add_creature( x );
+    x= std::make_shared<Skeleton>( 2 );
+    level.add_creature( x );
+    x= std::make_shared<Orc>( 2 );
+    level.add_creature( x );
+
+    joc.Add_level(level);
+    level.reset();
+
+    
+    /// lvl 4hhj
+    x= std::make_shared<Orc>( 7 );
+    level.add_creature( x );
+    x= std::make_shared<Wolf>( 7 );
+    level.add_creature( x );
+    
+    joc.Add_level(level);
+    level.reset();
+    
+    /// lvl 5
+    x= std::make_shared<Goblin>( 83 );
+    level.add_creature( x );
+
+    joc.Add_level(level);
+    level.reset();
+
+    ///     -   --- -   -   -   -   -   -   --  -   -
+
+    joc.start();
+    x.reset();
+    y.reset();
 }
+
+#define PLAYER                      /// NO PLAY --------------> commentate
+
+int main()
+{
+    std::string input_string;
+    clear_window();
+    std::cout << "WELCOME!\npress: S -to start or Q - to quit\n";
+    while( true )
+    {
+        input_string = 's';
+        
+        #ifdef PLAYER
+            std::cin >> input_string;           /// PLAY
+        #endif
+        
+        char option = input_string[0];
+        option = std::tolower( option );    
+
+        try{
+            if( option == 's' and input_string.size()==1  )
+            {
+                setup();
+                break;
+            } 
+            else if( option == 'q' and input_string.size()==1 )
+            {
+                break;
+            }
+            else 
+                throw Input_Invalid();
+        }
+        catch( MyException &e ){
+            std::cout << e.what() << "\n";
+        }
+    }
+}
+
+
+
+
+
